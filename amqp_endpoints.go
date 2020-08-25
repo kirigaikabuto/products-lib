@@ -14,18 +14,21 @@ func NewAMQPEndpointFactory(productService ProductService) *AMQPEndpointFactory 
 	return &AMQPEndpointFactory{productService: productService}
 }
 
+type ErrorSt struct {
+	Text string `json:"text"`
+}
 func (fac *AMQPEndpointFactory) GetProductByIdAMQPEndpoint() amqp.Handler {
 	return func(message amqp.Message) *amqp.Message {
 		cmd := &GetProductByIdCommand{}
 		if cmd.Id == 0 {
-			return AMQPError(errors.New("not product id").Error())
+			return AMQPError(&ErrorSt{errors.New("not product id").Error()})
 		}
 		if err := json.Unmarshal(message.Body, cmd); err != nil {
-			return AMQPError(err)
+			return AMQPError(&ErrorSt{err.Error()})
 		}
 		resp, err := cmd.Exec(fac.productService)
 		if err != nil {
-			return AMQPError(err)
+			return AMQPError(&ErrorSt{err.Error()})
 		}
 		return OK(resp)
 	}
