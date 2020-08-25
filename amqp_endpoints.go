@@ -2,6 +2,7 @@ package products_lib
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/djumanoff/amqp"
 )
 
@@ -16,6 +17,9 @@ func NewAMQPEndpointFactory(productService ProductService) *AMQPEndpointFactory 
 func (fac *AMQPEndpointFactory) GetProductByIdAMQPEndpoint() amqp.Handler {
 	return func(message amqp.Message) *amqp.Message {
 		cmd := &GetProductByIdCommand{}
+		if cmd.Id == 0 {
+			return AMQPError(errors.New("not product id"))
+		}
 		if err := json.Unmarshal(message.Body, cmd); err != nil {
 			return AMQPError(err)
 		}
