@@ -65,7 +65,7 @@ func (ps *postgreStore) Create(product *Product) (*Product, error) {
 
 func (ps *postgreStore) GetById(id int64) (*Product, error) {
 	product := &Product{}
-	err := ps.db.QueryRow("select id,name,price,image_url from products where id= $1", id).Scan(&product.Name, &product.Price, &product.ImageUrl)
+	err := ps.db.QueryRow("select id,name,price,image_url from products where id= $1", id).Scan(&product.Id, &product.Name, &product.Price, &product.ImageUrl)
 	if err != nil {
 		return nil, err
 	}
