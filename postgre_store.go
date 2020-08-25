@@ -3,6 +3,7 @@ package products_lib
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 	"strconv"
@@ -70,6 +71,7 @@ func (ps *postgreStore) GetById(id int64) (*Product, error) {
 		return nil, err
 	}
 	if product.Id == 0 {
+		fmt.Println("go to error with product")
 		return nil, errors.New("no data by id")
 	}
 	return product, nil
