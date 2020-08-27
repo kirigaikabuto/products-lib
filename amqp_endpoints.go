@@ -20,12 +20,15 @@ type ErrorSt struct {
 func (fac *AMQPEndpointFactory) GetProductByIdAMQPEndpoint() amqp.Handler {
 	return func(message amqp.Message) *amqp.Message {
 		cmd := &GetProductByIdCommand{}
+
 		if err := json.Unmarshal(message.Body, cmd); err != nil {
 			return AMQPError(&ErrorSt{err.Error()})
 		}
+
 		if cmd.Id == 0 {
 			return AMQPError(&ErrorSt{errors.New("not product id").Error()})
 		}
+
 		resp, err := cmd.Exec(fac.productService)
 		if err != nil {
 			return AMQPError(&ErrorSt{err.Error()})
