@@ -82,6 +82,7 @@ func (fac *AMQPEndpointFactory) DeleteProductAMQPEndpoint() amqp.Handler {
 		return OK(resp)
 	}
 }
+
 func OK(d interface{}) *amqp.Message {
 	data, _ := json.Marshal(d)
 	return &amqp.Message{Body: data}
