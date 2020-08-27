@@ -17,6 +17,7 @@ func NewAMQPEndpointFactory(productService ProductService) *AMQPEndpointFactory 
 type ErrorSt struct {
 	Text string `json:"text"`
 }
+
 func (fac *AMQPEndpointFactory) GetProductByIdAMQPEndpoint() amqp.Handler {
 	return func(message amqp.Message) *amqp.Message {
 		cmd := &GetProductByIdCommand{}
@@ -56,7 +57,7 @@ func OK(d interface{}) *amqp.Message {
 	return &amqp.Message{Body: data}
 }
 
-func AMQPError(e interface{}) *amqp.Message{
+func AMQPError(e interface{}) *amqp.Message {
 	errObj, _ := json.Marshal(e)
 	return &amqp.Message{Body: errObj}
 }

@@ -1,6 +1,5 @@
 package products_lib
 
-
 import (
 	"database/sql"
 	"strconv"
