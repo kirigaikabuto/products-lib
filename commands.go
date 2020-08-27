@@ -39,3 +39,7 @@ func (cmd *UpdateProductCommand) Exec(service ProductService) (interface{}, erro
 type DeleteProductCommand struct {
 	Id int64 `json:"id"`
 }
+
+func (cmd *DeleteProductCommand) Exec(service ProductService) (interface{}, error) {
+	return nil,service.DeleteProduct(cmd)
+}

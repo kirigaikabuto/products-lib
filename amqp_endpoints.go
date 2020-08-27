@@ -27,7 +27,7 @@ func (fac *AMQPEndpointFactory) GetProductByIdAMQPEndpoint() amqp.Handler {
 		}
 
 		if cmd.Id == 0 {
-			return AMQPError(&ErrorSt{errors.New("not product id").Error()})
+			return AMQPError(&ErrorSt{errors.New("no product id").Error()})
 		}
 
 		resp, err := cmd.Exec(fac.productService)
@@ -52,6 +52,36 @@ func (fac *AMQPEndpointFactory) CreateProductAMQPEndpoint() amqp.Handler {
 	}
 }
 
+func (fac *AMQPEndpointFactory) ListProductsAMQPEndpoint() amqp.Handler {
+	return func(message amqp.Message) *amqp.Message{
+		cmd := &ListProductCommand{}
+		if err := json.Unmarshal(message.Body, cmd); err != nil {
+			return AMQPError(err)
+		}
+		resp, err := cmd.Exec(fac.productService)
+		if err != nil {
+			return AMQPError(err)
+		}
+		return OK(resp)
+	}
+}
+
+func (fac *AMQPEndpointFactory) DeleteProductAMQPEndpoint() amqp.Handler {
+	return func(message amqp.Message) *amqp.Message{
+		cmd := &DeleteProductCommand{}
+		if err := json.Unmarshal(message.Body, cmd); err != nil {
+			return AMQPError(err)
+		}
+		if cmd.Id == 0 {
+			return AMQPError(&ErrorSt{errors.New("no product id").Error()})
+		}
+		resp, err := cmd.Exec(fac.productService)
+		if err != nil {
+			return AMQPError(err)
+		}
+		return OK(resp)
+	}
+}
 func OK(d interface{}) *amqp.Message {
 	data, _ := json.Marshal(d)
 	return &amqp.Message{Body: data}
