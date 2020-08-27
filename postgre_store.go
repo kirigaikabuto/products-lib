@@ -119,5 +119,9 @@ func (ps *postgreStore) Update(product *ProductUpdate) (*Product, error) {
 }
 
 func (ps *postgreStore) Delete(id int64) error {
+	_, err := ps.db.Exec("DELETE FROM products WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
