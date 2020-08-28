@@ -83,6 +83,23 @@ func (fac *AMQPEndpointFactory) DeleteProductAMQPEndpoint() amqp.Handler {
 	}
 }
 
+func (fac *AMQPEndpointFactory) UpdateProductAMQPEndpoint() amqp.Handler {
+	return func(message amqp.Message) *amqp.Message{
+		cmd := &UpdateProductCommand{}
+		if err := json.Unmarshal(message.Body, cmd); err != nil {
+			return AMQPError(err)
+		}
+		if cmd.Id == 0 {
+			return AMQPError(&ErrorSt{errors.New("no product id").Error()})
+		}
+		resp, err := cmd.Exec(fac.productService)
+		if err != nil {
+			return AMQPError(err)
+		}
+		return OK(resp)
+	}
+}
+
 func OK(d interface{}) *amqp.Message {
 	data, _ := json.Marshal(d)
 	return &amqp.Message{Body: data}
